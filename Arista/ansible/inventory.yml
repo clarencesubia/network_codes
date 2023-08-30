@@ -1,0 +1,10 @@
+switches:
+  children:
+    arista_1:
+      hosts:
+        192.168.31.240
+      vars:
+        ansible_connection: network_cli
+        ansible_ssh_user: admin
+        ansible_ssh_pass: pass!
+        ansible_network_os: eos

@@ -1,0 +1,43 @@
+---
+- name: Arista Configuration
+  gather_facts: true
+  hosts: all
+
+  tasks:
+    - name: Configure hostname
+      arista.eos.eos_config:
+        lines: 
+          - hostname vEOS-Lab-Testing
+      when: ansible_network_os == 'eos'
+
+    - name: Delete existing MYACL
+      arista.eos.eos_acls:
+        config:
+        - afi: ipv4
+          acls:
+          - name: MYACL
+        state: deleted
+
+    - name: Create an ACL
+      arista.eos.eos_config:
+        lines:
+          - 10 permit ip host 192.0.2.1 any log
+          - 20 permit ip host 192.0.2.2 any log
+          - 30 permit ip host 192.0.2.3 any log
+          - 40 permit ip host 192.0.2.4 any log
+          - 50 permit ip host 192.0.2.5 any log
+        parents: ip access-list MYACL
+
+    - name: Add acl MYACL to VLAN777
+      arista.eos.eos_config:
+        lines:
+        - ip access-group MYACL out
+        parents: interface vlan777
+
+    - name: Print out facts
+      debug:
+        var: ansible_facts
+
+    - name: Print hostvars
+      debug:
+        var: hostvars

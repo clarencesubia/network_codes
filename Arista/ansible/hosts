@@ -1,9 +1,9 @@
 [switches]
-192.168.31.152
+192.168.31.240
 
 [switches:vars]
 ansible_network_os=eos
 ansible_user=admin
 ansible_connection=network_cli
 ansible_become=yes
-ansible_ssh_pass=arista123
+ansible_ssh_pass=pass!
