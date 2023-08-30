@@ -1,0 +1,45 @@
+---
+- name: EOS Update ACL
+  hosts: switches
+  gather_facts: false
+
+  tasks:
+    - name: EOS Show Version
+      eos_command:
+        commands:
+          - "show version"
+      register: result
+    
+    - name: Print out result
+      debug:
+        var: result 
+
+    - name: Delete global_ilo ACL
+      eos_acls:
+        config:
+        - afi: ipv4
+          acls:
+          - name: test
+        state: deleted
+      register: result
+
+    - name: Print out result
+      debug:
+        var: result 
+
+    - name: Load an acl into the device
+      arista.eos.eos_config:
+        lines:
+        - 10 permit ip host 192.0.2.1 any log
+        - 20 permit ip host 192.0.2.2 any log
+        - 30 permit ip host 192.0.2.3 any log
+        - 40 permit ip host 192.0.2.4 any log
+        parents: ip access-list test
+        before: no ip access-list test
+
+
+    - name: Override module attributes of given access-groups
+      arista.eos.eos_config:
+        lines:
+        - ip access-group test out
+        parents: interface ethernet7
