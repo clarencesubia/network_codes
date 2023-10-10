@@ -1,0 +1,16 @@
+---
+- name: EOS Update ACL
+  hosts: switches
+  gather_facts: false
+
+  tasks:
+
+  - name: Update SSH Management Security
+    arista.eos.eos_config:
+      save_when: changed
+      lines:
+        - cipher aes256-gcm@openssh.com aes128-gcm@openssh.com
+        - key-exchange curve25519-sha256@libssh.org ecdh-sha2-nistp384
+        - hostkey server ed25519 ecdsa-nistp521
+        - mac hmac-sha2-256 hmac-sha2-512
+      parents: management ssh
